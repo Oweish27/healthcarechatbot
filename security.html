@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Management & Security in Healthcare</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-gradient: linear-gradient(135deg, #93c5fd, #2563eb);
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --hover-color: #1e3a8a;
+            --cta-bg: #2563eb;
+            --cta-hover-bg: #1e40af;
+            --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --hover-box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: var(--box-shadow);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            animation: fadeIn var(--transition-speed) ease-in-out;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed), background var(--transition-speed);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-box-shadow);
+            background: var(--hover-color);
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            transition: color var(--transition-speed);
+        }
+
+        .feature-card:hover h3 {
+            color: white;
+        }
+
+        .feature-card p {
+            font-size: 16px;
+            color: var(--text-color);
+            transition: color var(--transition-speed);
+        }
+
+        .feature-card:hover p {
+            color: #e5e7eb;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cta button {
+            background: var(--cta-bg);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: var(--box-shadow);
+        }
+
+        .cta button:hover {
+            background: var(--cta-hover-bg);
+            transform: translateY(-3px);
+            box-shadow: var(--hover-box-shadow);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        Data Management & Security in Healthcare
+    </header>
+    <div class="container">
+        <h1>Ensuring Data Security and Effective Management</h1>
+        <p>
+            In the healthcare industry, data management and security are critical to ensuring patient privacy and
+            delivering quality care. Our system provides advanced features to securely store, manage, and access
+            healthcare data while adhering to the highest security standards.
+        </p>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Secure Data Storage</h3>
+                <p>All patient data is encrypted and stored securely to prevent unauthorized access.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Access Control</h3>
+                <p>Role-based access ensures that only authorized personnel can view or modify sensitive data.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Data Backup</h3>
+                <p>Regular backups are performed to ensure data is not lost in case of system failures.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Audit Trails</h3>
+                <p>Track all data access and modifications to maintain accountability and transparency.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Compliance</h3>
+                <p>Our system complies with healthcare regulations such as HIPAA and GDPR to protect patient privacy.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Real-Time Monitoring</h3>
+                <p>Monitor data access and system activity in real-time to detect and prevent potential threats.</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <button onclick="learnMore()">Learn More</button>
+        </div>
+    </div>
+
+    <script>
+        function learnMore() {
+            alert("For more information about our data management and security features, please contact us.");
+        }
+    </script>
+</body>
+
+</html>

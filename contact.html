@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Directory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        :root {
+            --primary-color: rgb(37, 99, 235);
+            --primary-light: rgb(219, 234, 254);
+            --text-dark: rgb(17, 24, 39);
+            --text-light: rgb(107, 114, 128);
+            --bg-color: rgb(249, 250, 251);
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: transform 0.2s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .hospital-icon {
+            color: var(--primary-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 384px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: rgb(243, 244, 246);
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        #searchInput:focus+.search-icon {
+            color: var(--primary-color);
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .hospital-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hospital-card:hover {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-4px);
+        }
+
+        .hospital-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .hospital-card:hover .hospital-image {
+            transform: scale(1.05);
+        }
+
+        .hospital-info {
+            padding: 1.5rem;
+        }
+
+        .hospital-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .info-row:hover {
+            background-color: rgb(243, 244, 246);
+        }
+
+        .info-icon {
+            color: var(--primary-color);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .info-row:hover .info-icon {
+            transform: scale(1.1);
+        }
+
+        .specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .specialty-tag {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .specialty-tag:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .info-text {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .info-row:hover .info-text {
+            color: var(--text-dark);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-light);
+            font-size: 1.25rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: none;
+            }
+
+            main {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="hospital-icon">
+                        <path d="M19 8V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2"></path>
+                        <path d="M2 8h20"></path>
+                        <path d="M18 11v9"></path>
+                        <path d="M6 11v9"></path>
+                        <path d="M22 8v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8"></path>
+                        <path d="M10 14h4"></path>
+                        <path d="M12 12v4"></path>
+                    </svg>
+                    <h1>Hospital Directory</h1>
+                </div>
+                <div class="search-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="search-icon">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search hospitals or diseases...">
+                </div>
+            </div>
+        </header>
+
+        <main id="hospitalList"></main>
+    </div>
+    <script>
+        const hospitals = [
+            {
+                id: 1,
+                name: "Sterling Hospital",
+                specialties: ["Cardiology", "Neurology", "Oncology", "Orthopedics", "Pediatrics"],
+                phone: "+91 79-4001-1111",
+                address: "Sterling Hospital Road, Memnagar, Ahmedabad, Gujarat 380052",
+                image: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 2,
+                name: "Apollo Hospital",
+                specialties: ["Cardiology", "Neurosurgery", "Gastroenterology", "Transplant Surgery"],
+                phone: "+91 79-6670-1800",
+                address: "Plot No.1A, Bhat GIDC Estate, Gandhinagar, Gujarat 382428",
+                image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 3,
+                name: "Zydus Hospital",
+                specialties: ["Oncology", "Cardiology", "Neurology", "Orthopedics"],
+                phone: "+91 79-7177-1777",
+                address: "Zydus Hospital Road, Thaltej, Ahmedabad, Gujarat 380054",
+                image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 4,
+                name: "CIMS Hospital",
+                specialties: ["Cardiology", "Critical Care", "Emergency Medicine", "Internal Medicine"],
+                phone: "+91 79-3010-1200",
+                address: "Off Science City Road, Sola, Ahmedabad, Gujarat 380060",
+                image: "https://images.unsplash.com/photo-1596541223130-5d31a73fb6c6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 5,
+                name: "KD Hospital",
+                specialties: ["Orthopedics", "Neurology", "Gastroenterology", "Urology"],
+                phone: "+91 79-6677-0000",
+                address: "Off SG Highway, Vaishnodevi Circle, Ahmedabad, Gujarat 382421",
+                image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 6,
+                name: "Shalby Hospital",
+                specialties: ["Joint Replacement", "Spine Surgery", "Cardiology", "Neurology"],
+                phone: "+91 79-4033-1111",
+                address: "Shalby Road, Ramdevnagar, Satellite, Ahmedabad, Gujarat 380015",
+                image: "https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 7,
+                name: "Civil Hospital Asarwa",
+                specialties: ["General Medicine", "Surgery", "Pediatrics", "Obstetrics"],
+                phone: "+91 79-2268-3721",
+                address: "Civil Hospital Campus, Asarwa, Ahmedabad, Gujarat 380016",
+                image: "https://images.unsplash.com/photo-1580281657527-47f288b195b6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 8,
+                name: "UN Mehta Heart Institute",
+                specialties: ["Cardiology", "Cardiac Surgery", "Pediatric Cardiology"],
+                phone: "+91 79-2268-8331",
+                address: "Civil Hospital Campus, Asarwa, Ahmedabad, Gujarat 380016",
+                image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 9,
+                name: "HCG Cancer Centre",
+                specialties: ["Medical Oncology", "Radiation Oncology", "Surgical Oncology"],
+                phone: "+91 79-4040-1111",
+                address: "Science City Road, Sola, Ahmedabad, Gujarat 380060",
+                image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 10,
+                name: "SAL Hospital",
+                specialties: ["Orthopedics", "Neurosurgery", "Plastic Surgery", "Nephrology"],
+                phone: "+91 79-7169-0000",
+                address: "Drive In Road, Thaltej, Ahmedabad, Gujarat 380054",
+                image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 11,
+                name: "Wockhardt Hospital",
+                specialties: ["Cardiology", "Neurology", "Orthopedics", "Transplant Surgery"],
+                phone: "+91 79-4040-4040",
+                address: "Gulbai Tekra, Ahmedabad, Gujarat 380006",
+                image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 12,
+                name: "Narayana Multispeciality Hospital",
+                specialties: ["Cardiology", "Oncology", "Neurosurgery", "Orthopedics"],
+                phone: "+91 79-3012-3456",
+                address: "Rakhial Cross Road, Ahmedabad, Gujarat 380023",
+                image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 13,
+                name: "Sanjivani Super Speciality Hospital",
+                specialties: ["Cardiology", "Nephrology", "Urology", "Gastroenterology"],
+                phone: "+91 261-235-6789",
+                address: "Athwalines, Surat, Gujarat 395001",
+                image: "https://images.unsplash.com/photo-1596541223130-5d31a73fb6c6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 14,
+                name: "BAPS Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics", "Orthopedics"],
+                phone: "+91 261-220-0100",
+                address: "Adajan, Surat, Gujarat 395009",
+                image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 15,
+                name: "Kiran Hospital",
+                specialties: ["Cardiology", "Oncology", "Neurology", "Critical Care"],
+                phone: "+91 261-244-4444",
+                address: "Katargam, Surat, Gujarat 395004",
+                image: "https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 16,
+                name: "Apple Hospital",
+                specialties: ["Orthopedics", "Spine Surgery", "Joint Replacement"],
+                phone: "+91 261-234-5678",
+                address: "City Light Road, Surat, Gujarat 395007",
+                image: "https://images.unsplash.com/photo-1580281657527-47f288b195b6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 17,
+                name: "Unique Hospital",
+                specialties: ["Gastroenterology", "Laparoscopic Surgery", "General Surgery"],
+                phone: "+91 261-222-3333",
+                address: "Ring Road, Surat, Gujarat 395002",
+                image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 18,
+                name: "Bankers Heart Institute",
+                specialties: ["Cardiology", "Cardiac Surgery", "Preventive Cardiology"],
+                phone: "+91 265-235-6789",
+                address: "Race Course Circle, Vadodara, Gujarat 390007",
+                image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 19,
+                name: "Bhailal Amin General Hospital",
+                specialties: ["General Medicine", "Surgery", "Obstetrics", "Pediatrics"],
+                phone: "+91 265-232-2222",
+                address: "Gorwa Road, Vadodara, Gujarat 390003",
+                image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 20,
+                name: "Tristar Hospital",
+                specialties: ["Neurology", "Neurosurgery", "Spine Surgery"],
+                phone: "+91 265-244-4444",
+                address: "Alkapuri, Vadodara, Gujarat 390007",
+                image: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 21,
+                name: "Care Institute of Medical Sciences",
+                specialties: ["Cardiology", "Oncology", "Neurology", "Orthopedics"],
+                phone: "+91 281-246-7890",
+                address: "University Road, Rajkot, Gujarat 360005",
+                image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 22,
+                name: "Sterling Hospital Rajkot",
+                specialties: ["Cardiology", "Neurosurgery", "Orthopedics", "Pediatrics"],
+                phone: "+91 281-234-5678",
+                address: "150 Feet Ring Road, Rajkot, Gujarat 360005",
+                image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 23,
+                name: "Gokul Hospital",
+                specialties: ["General Surgery", "Laparoscopic Surgery", "Gastroenterology"],
+                phone: "+91 281-222-3333",
+                address: "Kalawad Road, Rajkot, Gujarat 360001",
+                image: "https://images.unsplash.com/photo-1596541223130-5d31a73fb6c6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 24,
+                name: "Synergy Hospital",
+                specialties: ["Orthopedics", "Joint Replacement", "Spine Surgery"],
+                phone: "+91 278-256-7890",
+                address: "Bhavnagar Road, Bhavnagar, Gujarat 364001",
+                image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 25,
+                name: "Sir T Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics"],
+                phone: "+91 278-244-4444",
+                address: "Kalanala, Bhavnagar, Gujarat 364001",
+                image: "https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 26,
+                name: "Lifeline Hospital",
+                specialties: ["Cardiology", "Neurology", "Critical Care"],
+                phone: "+91 285-222-3333",
+                address: "Junagadh Road, Junagadh, Gujarat 362001",
+                image: "https://images.unsplash.com/photo-1580281657527-47f288b195b6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 27,
+                name: "Mehta Orthopedic Hospital",
+                specialties: ["Orthopedics", "Joint Replacement", "Sports Medicine"],
+                phone: "+91 285-234-5678",
+                address: "MG Road, Junagadh, Gujarat 362001",
+                image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 28,
+                name: "Jamnagar Cancer Hospital",
+                specialties: ["Medical Oncology", "Radiation Oncology", "Surgical Oncology"],
+                phone: "+91 288-255-5555",
+                address: "P.N. Marg, Jamnagar, Gujarat 361008",
+                image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 29,
+                name: "GG Hospital",
+                specialties: ["General Medicine", "Surgery", "Obstetrics"],
+                phone: "+91 288-267-8900",
+                address: "Jamjodhpur Road, Jamnagar, Gujarat 361001",
+                image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 30,
+                name: "Anand Surgical Hospital",
+                specialties: ["General Surgery", "Laparoscopic Surgery", "Urology"],
+                phone: "+91 2692-250-250",
+                address: "Station Road, Anand, Gujarat 388001",
+                image: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 31,
+                name: "Karamsad Medical Center",
+                specialties: ["General Medicine", "Cardiology", "Nephrology"],
+                phone: "+91 2692-228-411",
+                address: "Karamsad, Anand, Gujarat 388325",
+                image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 32,
+                name: "Nadiad Kidney Hospital",
+                specialties: ["Nephrology", "Urology", "Dialysis"],
+                phone: "+91 268-252-0323",
+                address: "Mukhidas Patel Road, Nadiad, Gujarat 387001",
+                image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 33,
+                name: "Mehsana General Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics"],
+                phone: "+91 2762-222-333",
+                address: "Highway Road, Mehsana, Gujarat 384002",
+                image: "https://images.unsplash.com/photo-1596541223130-5d31a73fb6c6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 34,
+                name: "Gandhinagar Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Emergency Care"],
+                phone: "+91 79-2325-0777",
+                address: "Sector 12, Gandhinagar, Gujarat 382012",
+                image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 35,
+                name: "Bhuj General Hospital",
+                specialties: ["General Medicine", "Surgery", "Orthopedics"],
+                phone: "+91 2832-220-977",
+                address: "Hospital Road, Bhuj, Gujarat 370001",
+                image: "https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 36,
+                name: "Porbandar Memorial Hospital",
+                specialties: ["General Medicine", "Pediatrics", "Obstetrics"],
+                phone: "+91 286-224-5678",
+                address: "M.G. Road, Porbandar, Gujarat 360575",
+                image: "https://images.unsplash.com/photo-1580281657527-47f288b195b6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 37,
+                name: "Morbi Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Emergency Care"],
+                phone: "+91 2822-240-501",
+                address: "Sanala Road, Morbi, Gujarat 363641",
+                image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 38,
+                name: "Valsad General Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics"],
+                phone: "+91 2632-243-000",
+                address: "Hospital Road, Valsad, Gujarat 396001",
+                image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 39,
+                name: "Bharuch Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Emergency Care"],
+                phone: "+91 2642-264-000",
+                address: "Civil Hospital Road, Bharuch, Gujarat 392001",
+                image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 40,
+                name: "Godhra General Hospital",
+                specialties: ["General Medicine", "Surgery", "Obstetrics"],
+                phone: "+91 2672-265-000",
+                address: "Hospital Road, Godhra, Gujarat 389001",
+                image: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 41,
+                name: "Navsari Civil Hospital",
+                specialties: ["General Medicine", "Pediatrics", "Emergency Care"],
+                phone: "+91 2637-244-000",
+                address: "Civil Hospital Road, Navsari, Gujarat 396445",
+                image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 42,
+                name: "Amreli General Hospital",
+                specialties: ["General Medicine", "Surgery", "Orthopedics"],
+                phone: "+91 2792-222-000",
+                address: "Civil Hospital Road, Amreli, Gujarat 365601",
+                image: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 43,
+                name: "Patan Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics"],
+                phone: "+91 2766-233-000",
+                address: "Hospital Road, Patan, Gujarat 384265",
+                image: "https://images.unsplash.com/photo-1596541223130-5d31a73fb6c6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 44,
+                name: "Dahod General Hospital",
+                specialties: ["General Medicine", "Surgery", "Emergency Care"],
+                phone: "+91 2673-222-000",
+                address: "Civil Hospital Road, Dahod, Gujarat 389151",
+                image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 45,
+                name: "Surendranagar Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Obstetrics"],
+                phone: "+91 2752-282-000",
+                address: "Civil Hospital Road, Surendranagar, Gujarat 363001",
+                image: "https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 46,
+                name: "Botad General Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics"],
+                phone: "+91 2849-271-000",
+                address: "Hospital Road, Botad, Gujarat 364710",
+                image: "https://images.unsplash.com/photo-1580281657527-47f288b195b6?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 47,
+                name: "Khambhalia General Hospital",
+                specialties: ["General Medicine", "Surgery", "Emergency Care"],
+                phone: "+91 2833-234-000",
+                address: "Hospital Road, Khambhalia, Gujarat 361305",
+                image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 48,
+                name: "Veraval Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Obstetrics"],
+                phone: "+91 2876-243-000",
+                address: "Civil Hospital Road, Veraval, Gujarat 362265",
+                image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 49,
+                name: "Jetpur General Hospital",
+                specialties: ["General Medicine", "Surgery", "Pediatrics"],
+                phone: "+91 2823-224-000",
+                address: "Hospital Road, Jetpur, Gujarat 360370",
+                image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500"
+            },
+            {
+                id: 50,
+                name: "Ankleshwar Civil Hospital",
+                specialties: ["General Medicine", "Surgery", "Emergency Care"],
+                phone: "+91 2646-247-000",
+                address: "GIDC Road, Ankleshwar, Gujarat 393002",
+                image: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=500"
+            }
+        ];
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const hospitalList = document.getElementById('hospitalList');
+
+        // Icons as SVG strings
+        const icons = {
+            stethoscope: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"></path><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"></path><circle cx="20" cy="10" r="2"></circle></svg>',
+            phone: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>',
+            mapPin: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>'
+        };
+
+        // Debounce function for better performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Function to create hospital card HTML with staggered animation
+        function createHospitalCard(hospital, index) {
+            const delay = index * 100; // Stagger the animation
+            return `
+        <div class="hospital-card" style="animation-delay: ${delay}ms">
+            <img src="${hospital.image}" alt="${hospital.name}" class="hospital-image">
+            <div class="hospital-info">
+                <h2 class="hospital-name">${hospital.name}</h2>
+                
+                <div class="info-section">
+                    <div class="info-row">
+                        <span class="info-icon">${icons.stethoscope}</span>
+                        <div>
+                            <p class="info-text">Specialties</p>
+                            <div class="specialties">
+                                ${hospital.specialties.map(specialty =>
+                `<span class="specialty-tag" onclick="filterBySpecialty('${specialty}')">${specialty}</span>`
+            ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-icon">${icons.phone}</span>
+                    <a href="tel:${hospital.phone}" class="info-text">${hospital.phone}</a>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-icon">${icons.mapPin}</span>
+                    <a href="https://maps.google.com/?q=${encodeURIComponent(hospital.address)}" 
+                       target="_blank" 
+                       class="info-text">${hospital.address}</a>
+                </div>
+            </div>
+        </div>
+    `;
+        }
+
+        // Function to filter by specialty when clicking on a specialty tag
+        window.filterBySpecialty = function (specialty) {
+            searchInput.value = specialty;
+            filterAndRenderHospitals(specialty);
+        };
+
+        // Function to filter and render hospitals with performance optimization
+        const filterAndRenderHospitals = debounce((searchTerm = '') => {
+            const searchLower = searchTerm.toLowerCase();
+            const filteredHospitals = hospitals.filter(hospital =>
+                hospital.name.toLowerCase().includes(searchLower) ||
+                hospital.specialties.some(specialty =>
+                    specialty.toLowerCase().includes(searchLower)
+                )
+            );
+
+            if (filteredHospitals.length === 0) {
+                hospitalList.innerHTML = `
+            <div class="no-results">
+                <p>No hospitals found matching "${searchTerm}"</p>
+                <button onclick="clearSearch()" 
+                        class="specialty-tag" 
+                        style="margin-top: 1rem; cursor: pointer;">
+                    Clear Search
+                </button>
+            </div>
+        `;
+                return;
+            }
+
+            hospitalList.innerHTML = filteredHospitals.map(createHospitalCard).join('');
+        }, 300); // Debounce for 300ms
+
+        // Function to clear search
+        window.clearSearch = function () {
+            searchInput.value = '';
+            filterAndRenderHospitals('');
+        };
+
+        // Event listener for search input
+        searchInput.addEventListener('input', (e) => {
+            filterAndRenderHospitals(e.target.value);
+        });
+
+        // Initial render
+        filterAndRenderHospitals();
+    </script>
+</body>
+
+</html>

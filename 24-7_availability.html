@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24/7 Availability</title>
+    <style>
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: white;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, black, black);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 50px auto;
+            width: 80%;
+            background-color: #fff;
+        }
+
+        .content {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        h1,
+        h2 {
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        ul {
+            margin: 20px 0;
+            list-style: none;
+        }
+
+        ul li {
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background: black;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+
+        .image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .image img {
+            max-width: 100%;
+            height: auto;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>24/7 Healthcare Assistance</h1>
+        <p>Your health, our priority – Anytime, Anywhere.</p>
+    </header>
+
+    <section class="container">
+        <div class="content">
+            <h2>Instant Medical Support</h2>
+            <p>Our AI-powered chatbot provides medical assistance anytime, anywhere. Whether it's late at night or an
+                emergency, we've got you covered.</p>
+
+            <ul>
+                <li>✔ Available 24/7 without interruptions</li>
+                <li>✔ AI-powered medical symptom checker</li>
+                <li>✔ Instant connection to emergency services</li>
+                <li>✔ Personalized healthcare guidance</li>
+            </ul>
+
+            <button class="btn" onclick="showAvailability()">Check Live Availability</button>
+            <p id="availability-status"></p>
+        </div>
+
+        <div class="image">
+            <img src="images/24-7.jpg" alt="Healthcare Assistance">
+        </div>
+    </section>
+
+   
+
+    <script>
+        // Function to show real-time availability status
+        function showAvailability() {
+            let statusElement = document.getElementById("availability-status");
+            let currentTime = new Date().toLocaleTimeString();
+            statusElement.innerHTML = `✅ Our AI Healthcare Chatbot is available now! <br> 🕒 Current Time: ${currentTime}`;
+            statusElement.style.color = "green";
+        }
+
+    </script>
+</body>
+
+</html>

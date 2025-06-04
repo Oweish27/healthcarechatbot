@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Healthcare Chatbot</title>
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: aliceblue;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* General container styling */
+    .container {
+      display: flex;
+      gap: 30px;
+      /* background-color: aliceblue; */
+      width: 95%;
+      height: 95%;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* Sidebar styling */
+    .sidebar {
+      width: 25%;
+      background-color: white;
+      padding: 16px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc #f4f4f9;
+      border-radius: 16px;
+    }
+
+    .sidebar h1 {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      text-align: center;
+      font-family: 'Karsu', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #1e88e5, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      animation: gradientMove 3s infinite;
+    }
+
+    /* Gradient animation */
+    @keyframes gradientMove {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .sidebar h3 {
+      font-size: 18px;
+      color: #333; 
+      margin-top: 20px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      font-weight: bold;
+      border-bottom: 1px solid #555;
+      padding-bottom: 5px;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 8px;
+    }
+
+    .conversation-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .conversation-item:hover {
+      background-color: #e3f2fd;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .conversation-item-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #1e88e5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .conversation-item-timestamp {
+      font-size: 12px;
+      color: black;
+      margin-top: 4px;
+    }
+
+    .new-chat-btn {
+      width: 100%;
+      padding: 12px;
+      color: #ffffff;
+      background-color: #1e88e5;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+      font-weight: bold;
+      margin-bottom: 22px;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+
+    .new-chat-btn:hover {
+      background-color: #6a11cb;
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    /* Chat container styling */
+    .chat-container {
+      width: 75%;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      position: relative;
+      border-radius: 16px; /* Rounded corners for a modern look */
+      background-color: white;
+    }
+
+    /* Gradient animation */
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Chat output section */
+    .chat-output {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc #f4f4f9;
+    }
+
+    .chat-output::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-output::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 8px;
+    }
+
+    /* Message bubble */
+    .message {
+      padding: 14px;
+      border-radius: 18px;
+      max-width: 75%;
+      font-size: 16px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+    }
+
+    .user-message {
+      background-color: #f1f1f1;
+      color: black;
+      align-self: flex-end;
+      box-shadow: 0 4px 12px rgba(0, 128, 255, 0.2);
+    }
+
+    .bot-message {
+      background-color: #1e88e5;
+      color: white;
+      align-self: flex-start;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Timestamp */
+    .timestamp {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+      font-size: 14px;
+      color: black;
+      align-self: flex-start;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 18px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Input section */
+    .input-box {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .input-box input {
+      flex: 1;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      font-size: 16px;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-box input:focus {
+      border-color: #1e88e5;
+      outline: none;
+    }
+
+    .input-box button {
+      padding: 14px;
+      background-color: #1e88e5;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .input-box button:hover {
+      background-color: #6a11cb;
+      transform: scale(1.05);
+    }
+
+    .delete-chat-btn {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      color: #333;
+      font-size: 16px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .delete-chat-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <section class="container">
+    <!-- Sidebar for conversation history -->
+    <div class="sidebar" id="sidebar">
+      <h1>ORO BOT</h1>
+      <button class="new-chat-btn" onclick="newChat()">+ New Chat</button>
+    </div>
+
+    <!-- Chat container -->
+    <div class="chat-container">
+      <div class="chat-output" id="chatOutput"></div>
+      <div class="typing-indicator" id="typingIndicator">AI is typing...</div>
+      <div class="input-box">
+        <input type="text" id="userInput" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const chatOutput = document.getElementById('chatOutput');
+    const sidebar = document.getElementById('sidebar');
+    const userInput = document.getElementById('userInput');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    let conversations = JSON.parse(localStorage.getItem('conversations')) || [];
+    let currentChat = conversations.length > 0 ? conversations[conversations.length - 1].chat : [];
+
+    // Load conversations from local storage on page load
+    window.onload = () => {
+      updateSidebar();
+      displayCurrentChat();
+    };
+
+    // Send message when pressing Enter key
+    userInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      // Automatically create a new chat if the current chat is empty
+      if (currentChat.length === 0) {
+        saveConversation(); // Save the previous chat (if any)
+        currentChat = []; // Start a new chat session
+        updateSidebar(); // Update the sidebar with the new chat
+      }
+
+      displayMessage(message, 'user');
+      currentChat.push({ sender: 'user', message });
+      userInput.value = '';
+
+      typingIndicator.style.opacity = 1;
+
+      try {
+        const response = await fetch('http://127.0.0.1:5000/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        displayMessage(data.response, 'bot');
+        currentChat.push({ sender: 'bot', message: data.response });
+      } catch (error) {
+        displayMessage('Error: Failed to connect to server', 'bot');
+        currentChat.push({ sender: 'bot', message: 'Error: Failed to connect to server' });
+      } finally {
+        typingIndicator.style.opacity = 0;
+      }
+    }
+
+    function displayMessage(message, sender) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+
+      // Format the timestamp to 12-hour format with AM/PM
+      const now = new Date();
+      const hours = now.getHours() % 12 || 12; // Convert to 12-hour format
+      const minutes = now.getMinutes().toString().padStart(2, '0'); // Add leading zero to minutes
+      const ampm = now.getHours() >= 12 ? 'PM' : 'AM'; // Determine AM/PM
+      const formattedTime = `${hours}:${minutes} ${ampm}`;
+
+      messageElement.innerHTML = `${message}<div class="timestamp">${formattedTime}</div>`;
+      chatOutput.appendChild(messageElement);
+      chatOutput.scrollTop = chatOutput.scrollHeight;
+    }
+
+    function saveConversation() {
+      if (currentChat.length > 0) {
+        const time = new Date().toISOString(); // Store as ISO string
+        if (conversations.length === 0 || conversations[conversations.length - 1].chat !== currentChat) {
+          conversations.push({ chat: currentChat, time });
+        } else {
+          conversations[conversations.length - 1].chat = currentChat;
+        }
+        localStorage.setItem('conversations', JSON.stringify(conversations));
+        updateSidebar();
+      }
+    }
+
+    function updateSidebar() {
+      sidebar.innerHTML = `
+        <h1>ORO BOT</h1>
+        <button class="new-chat-btn" onclick="newChat()">+ New Chat</button>
+      `;
+
+      const today = new Date().toDateString();
+      const yesterday = new Date(Date.now() - 86400000).toDateString(); // 86400000ms = 1 day
+
+      let todayChats = '';
+      let yesterdayChats = '';
+      let olderChats = '';
+
+      conversations.forEach((conv, index) => {
+        const chatDate = new Date(conv.time).toDateString(); // Parse stored time
+        const chatItem = `
+          <div class="conversation-item" onclick="loadConversation(${index})">
+            <div class="conversation-item-title">Chat ${index + 1}</div>
+            <div class="conversation-item-timestamp">${new Date(conv.time).toLocaleString()}</div>
+            <button class="delete-chat-btn" onclick="deleteChat(${index}, event)"><i class="fas fa-trash"></i></button>
+          </div>
+        `;
+
+        if (chatDate === today) {
+          todayChats += chatItem;
+        } else if (chatDate === yesterday) {
+          yesterdayChats += chatItem;
+        } else {
+          olderChats += chatItem;
+        }
+      });
+
+      if (todayChats) {
+        sidebar.innerHTML += `<h3>Today</h3>${todayChats}`;
+      }
+      if (yesterdayChats) {
+        sidebar.innerHTML += `<h3>Yesterday</h3>${yesterdayChats}`;
+      }
+      if (olderChats) {
+        sidebar.innerHTML += `<h3>Older</h3>${olderChats}`;
+      }
+    }
+
+    function loadConversation(index) {
+      chatOutput.innerHTML = '';
+      currentChat = conversations[index].chat;
+      conversations[index].chat.forEach((msg) => {
+        displayMessage(msg.message, msg.sender);
+      });
+    }
+
+    function newChat() {
+      saveConversation();
+      currentChat = [];
+      chatOutput.innerHTML = '';
+    }
+
+    function displayCurrentChat() {
+      chatOutput.innerHTML = '';
+      currentChat.forEach((msg) => {
+        displayMessage(msg.message, msg.sender);
+      });
+    }
+
+    function deleteChat(index, event) {
+      event.stopPropagation(); // Prevent click event from propagating
+      conversations.splice(index, 1);
+      localStorage.setItem('conversations', JSON.stringify(conversations));
+      updateSidebar();
+      chatOutput.innerHTML = '';
+      if (conversations.length > 0) {
+        currentChat = conversations[conversations.length - 1].chat;
+        displayCurrentChat();
+      } else {
+        currentChat = [];
+      }
+    }
+  </script>
+</body>
+
+</html>

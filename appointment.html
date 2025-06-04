@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Appointment Booking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            color: #1a202c;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #4a5568;
+            font-size: 1.125rem;
+        }
+
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .booking-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-section,
+        .doctors-section {
+            background-color: #f9fafb;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background-color: #ffffff;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: #6366f1;
+            color: #ffffff;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .doctors-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .doctor-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background-color: #ffffff;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .doctor-card:hover {
+            background-color: #edf2f7;
+            transform: translateY(-2px);
+            cursor: pointer;
+        }
+
+        .doctor-image {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .doctor-info h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+            color: #2d3748;
+        }
+
+        .doctor-info p {
+            color: #4a5568;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-icon {
+            width: 4rem;
+            height: 4rem;
+            background-color: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .success-icon svg {
+            color: #22c55e;
+        }
+
+        .modal button {
+            margin-top: 1rem;
+            background-color: #6366f1;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .modal button:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Book Your Appointment</h1>
+            <p>Schedule a visit with our experienced medical professionals</p>
+        </header>
+
+        <main>
+            <div class="booking-container">
+                <div class="form-section">
+                    <h2>Personal Information</h2>
+                    <form id="appointmentForm">
+                        <div class="form-group">
+                            <label>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                Full Name
+                            </label>
+                            <input type="text" name="name" required placeholder="John Doe">
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                Email
+                            </label>
+                            <input type="email" name="email" required placeholder="john@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                                </svg>
+                                Phone Number
+                            </label>
+                            <input type="tel" name="phone" required placeholder="(555) 555-5555">
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                                Preferred Date
+                            </label>
+                            <input type="date" name="date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                </svg>
+                                Preferred Time
+                            </label>
+                            <input type="time" name="time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                                Select Doctor
+                            </label>
+                            <select name="doctorId" required>
+                                <option value="">Choose a doctor</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="submitBtn">Book Appointment</button>
+                    </form>
+                </div>
+
+                <div class="doctors-section">
+                    <h2>Available Doctors</h2>
+                    <div id="doctorsList" class="doctors-list"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 7 9 18l-5-5" />
+                </svg>
+            </div>
+            <h2>Appointment Confirmed!</h2>
+            <p>We've sent you a confirmation email and text message with your appointment details.</p>
+            <button onclick="closeModal()">Book Another Appointment</button>
+            <button onclick="window.location.href='index.html'">Home</button>
+        </div>
+    </div>
+
+    <script>
+        const doctors = [
+            {
+                id: 1,
+                name: "Dr. Sarah Wilson",
+                specialty: "Cardiologist",
+                image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300"
+            },
+            {
+                id: 2,
+                name: "Dr. James Chen",
+                specialty: "Neurologist",
+                image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300"
+            },
+            {
+                id: 3,
+                name: "Dr. Emily Rodriguez",
+                specialty: "Pediatrician",
+                image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=300&h=300"
+            }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDoctors();
+            setupFormHandling();
+        });
+
+        // Populate doctors list and select dropdown
+        function populateDoctors() {
+            const doctorsList = document.getElementById('doctorsList');
+            const doctorSelect = document.querySelector('select[name="doctorId"]');
+
+            doctors.forEach(doctor => {
+                // Add doctor card to the list
+                const doctorCard = document.createElement('div');
+                doctorCard.className = 'doctor-card';
+                doctorCard.innerHTML = `
+                <img src="${doctor.image}" alt="${doctor.name}" class="doctor-image">
+                <div class="doctor-info">
+                    <h3>${doctor.name}</h3>
+                    <p>${doctor.specialty}</p>
+                </div>
+            `;
+                doctorsList.appendChild(doctorCard);
+
+                // Add doctor to select dropdown
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = `${doctor.name} - ${doctor.specialty}`;
+                doctorSelect.appendChild(option);
+            });
+        }
+
+        // Handle form submission
+        function setupFormHandling() {
+            const form = document.getElementById('appointmentForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Booking...';
+
+                // Collect form data
+                const formData = new FormData(form);
+                const appointmentData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    date: formData.get('date'),
+                    time: formData.get('time'),
+                    doctorId: formData.get('doctorId'),
+                    doctorName: doctors.find(doc => doc.id == formData.get('doctorId'))?.name || "Unknown"
+                };
+
+                // Save appointment data to local storage
+                const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+                appointments.push(appointmentData);
+                localStorage.setItem('appointments', JSON.stringify(appointments));
+
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Show confirmation modal
+                const modal = document.getElementById('confirmationModal');
+                modal.classList.add('show');
+
+                // Reset form
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Book Appointment';
+            });
+        }
+
+        // Close modal and reset form
+        function closeModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('show');
+        }
+    </script>
+</body>
+
+</html>
