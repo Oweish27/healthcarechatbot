@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Use the correct model name for Gemini API
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 GREETING_KEYWORDS = ["hi", "hy", "hii", "helloo", "good night", "hello", "hey", "good morning", "good evening", "good afternoon",
                      "hi", "hello", "hey", "howdy",
